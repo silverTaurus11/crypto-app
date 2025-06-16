@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/crypto_provider.dart';
 import '../providers/favorite_provider.dart';
 import 'detail_page.dart';
+import '../utils/formatter.dart';
 
 class FavoritesPage extends ConsumerWidget {
   const FavoritesPage({super.key});
@@ -35,7 +36,7 @@ class FavoritesPage extends ConsumerWidget {
                   ),
                 ),
                 title: Text(coin.name),
-                subtitle: Text('\$${coin.priceUsd.toStringAsFixed(2)}'),
+                subtitle: Text(formatCurrency(coin.priceUsd)),
                 trailing: Text(
                   '${coin.changePercent24Hr.toStringAsFixed(2)}%',
                   style: TextStyle(
