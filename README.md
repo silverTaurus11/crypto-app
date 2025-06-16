@@ -42,4 +42,6 @@ flutter pub get
 Run the app
 ```
 3. **Run the app**
-```flutter run```
+```
+flutter run
+```
