@@ -14,7 +14,6 @@ class StartupWrapper extends ConsumerWidget {
     final favorites = ref.watch(favoriteCoinsProvider);
 
     final isCoinsReady = coinsAsync is AsyncData;
-    final isFavoritesReady = favorites.isNotEmpty || favorites.isEmpty;
 
     if (!isCoinsReady) {
       return const SplashScreen();

@@ -1,13 +1,17 @@
-import 'dart:convert';
+import 'package:crypto_app/domain/repositories/crypto_repository.dart';
 import 'package:http/http.dart' as http;
-import '../models/crypto_coin.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert';
 
-class CryptoService {
-  final String _apiKey = '60df39130fe319f7b1012cebc0668fb6064293ee459fa24da8612cdad25a29f5';
-  //'7a17994206166fc27849a4800875fb9645031ac36b6d8ff53f901f336c30774d';
+import '../../domain/entities/crypto_coin.dart';
+import '../models/crypto_coin_model.dart';
 
+class CoinRepositoryImpl implements CryptoRepository {
+  final String _apiKey =
+      '084b71664f9bfe10315949e1eab71ec8de1cc78027645ef86a58d05b1bcd320c';
+
+  @override
   Future<List<CryptoCoin>> fetchCoins() async {
     final url = Uri.https(
       'rest.coincap.io',
@@ -19,13 +23,17 @@ class CryptoService {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       final List coins = data['data'];
-      return coins.map((json) => CryptoCoin.fromJson(json)).toList();
+      return coins
+          .map((json) => CryptoCoinModel.fromJson(json))
+          .toList();
     } else {
       throw Exception('Gagal mengambil data CoinCap (v3)');
     }
   }
 
-  Future<Map<String, dynamic>> fetchHistoricalDataWithTimestamps(String coinId, String interval) async {
+  @override
+  Future<Map<String, dynamic>> fetchHistoricalDataWithTimestamps(
+      String coinId, String interval) async {
     final url = Uri.https(
       'rest.coincap.io',
       '/v3/assets/$coinId/history',
