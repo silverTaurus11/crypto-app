@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../utils/formatter.dart';
-import '../providers/crypto_provider.dart';
-import '../providers/favorite_provider.dart';
+import '../providers/riverpods/crypto_provider.dart';
+import '../providers/riverpods/favorite_provider.dart';
 import 'detail_page.dart';
 
 class HomePage extends ConsumerWidget {

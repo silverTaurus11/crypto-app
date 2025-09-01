@@ -1,8 +1,8 @@
 import 'package:crypto_app/domain/usecases/get_coins.dart';
 import 'package:crypto_app/domain/usecases/get_detail.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../data/repositories/crypto_repository_impl.dart';
-import '../../domain/entities/crypto_coin.dart';
+import '../../../data/repositories/crypto_repository_impl.dart';
+import '../../../domain/entities/crypto_coin.dart';
 
 //Repository Provider
 final cryptoRepositoryProvider = Provider((ref) {

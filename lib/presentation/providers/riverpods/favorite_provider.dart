@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:crypto_app/domain/repositories/favorite_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../data/repositories/favorite_coin_repository_impl.dart';
-import '../../domain/usecases/get_favorite_coins.dart';
-import '../../domain/usecases/toggle_favorite_coin.dart';
+import '../../../data/repositories/favorite_coin_repository_impl.dart';
+import '../../../domain/usecases/get_favorite_coins.dart';
+import '../../../domain/usecases/toggle_favorite_coin.dart';
 
 
 // Repository Provider

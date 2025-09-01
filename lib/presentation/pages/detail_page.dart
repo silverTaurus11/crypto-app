@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/crypto_coin.dart';
 import '../../utils/formatter.dart';
-import '../providers/crypto_provider.dart';
+import '../providers/riverpods/crypto_provider.dart';
 
 class CoinDetailPage extends ConsumerWidget {
   final CryptoCoin coin;
