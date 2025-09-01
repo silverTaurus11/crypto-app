@@ -38,7 +38,7 @@ dependencies:
   flutter_riverpod: ^2.5.1
   flutter_bloc: ^9.1.0
   equatable: ^2.0.5
-  shared_preferences: ^2.2.2
+  shared_preferences: ^2.4.12
   fl_chart: ^0.66.1
   intl: ^0.18.1 # atau versi terbaru
 
