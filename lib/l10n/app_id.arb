@@ -1,0 +1,14 @@
+{
+  "@@locale": "id",
+  "home_title": "Harga Kripto",
+  "favorite_title": "Koin Favorit",
+  "currentPrice": "Harga Sekarang",
+  "symbol": "Simbol",
+  "rank": "Peringkat",
+  "marketCap": "Kapitalisasi Pasar",
+  "volume24h": "Volume (24 Jam)",
+  "change24h": "Perubahan (24 Jam)",
+  "minutes15": "15 Menit",
+  "hour1": "1 Jam",
+  "day1": "1 Hari"
+}

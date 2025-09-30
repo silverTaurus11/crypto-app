@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../utils/formatter.dart';
-import '../providers/riverpods/crypto_provider.dart';
+import '../../l10n/app_localizations.dart';
+import '../providers/blocs/coin_bloc.dart';
+import '../providers/blocs/states/coint_state.dart';
+import '../providers/riverpods/bloc_provider.dart';
 import '../providers/riverpods/favorite_provider.dart';
 import 'detail_page.dart';
 
@@ -10,25 +13,38 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final coinsAsync = ref.watch(cryptoAutoRefreshProvider);
+    final loc = AppLocalizations.of(context)!;
     final favoriteNotifier = ref.read(favoriteCoinsProvider.notifier);
-    final favoriteState =
-        ref.watch(favoriteCoinsProvider); // AsyncValue<Set<String>>
+    final favoriteState = ref.watch(favoriteCoinsProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Crypto Prices (Auto Refresh)')),
-      body: coinsAsync.when(
-        data: (coins) => RefreshIndicator(
-            onRefresh: () async {
-              ref.invalidate(cryptoAutoRefreshProvider);
-            },
-            child: favoriteState.when(
-                data: (favorites) {
-                  return ListView.builder(
-                    itemCount: coins.length,
+    final coinBloc = ref.watch(coinBlocProvider);
+
+    return BlocProvider.value(
+      value: coinBloc,
+      child: Scaffold(
+        appBar: AppBar(title: Text(loc.home_title)),
+        body: BlocBuilder<CoinBloc, CoinState>(
+          builder: (context, state) {
+            if (state is CoinLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is CoinError) {
+              return Center(child: Text("❌ ${state.message}"));
+            } else if (state is CoinLoaded) {
+              return favoriteState.when(
+                data: (favorites) => RefreshIndicator(
+                  onRefresh: () async {
+                    ref.invalidate(coinBlocProvider);
+                  },
+                  child: ListView.builder(
+                    itemCount: state.coins.length,
                     itemBuilder: (context, index) {
-                      final coin = coins[index];
+                      final coin = state.coins[index];
                       final isFav = favorites.contains(coin.id);
+
+                      // fallback: pakai REST price kalau belum ada WS update
+                      final livePrice =
+                          state.livePrices[coin.id.toLowerCase()] ??
+                              coin.priceUsd;
 
                       return ListTile(
                         key: ValueKey(coin.id),
@@ -40,7 +56,7 @@ class HomePage extends ConsumerWidget {
                           ),
                         ),
                         title: Text(coin.name),
-                        subtitle: Text(formatCurrency(coin.priceUsd)),
+                        subtitle: Text('\$${livePrice.toString()}'),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -58,8 +74,7 @@ class HomePage extends ConsumerWidget {
                                 color: isFav ? Colors.amber : Colors.white,
                               ),
                               onPressed: () {
-                                favoriteNotifier
-                                    .toggle(coin.id); // Toggle favorit
+                                favoriteNotifier.toggle(coin.id);
                               },
                             ),
                           ],
@@ -72,13 +87,16 @@ class HomePage extends ConsumerWidget {
                         ),
                       );
                     },
-                  );
-                },
-                error: (e, _) => Center(child: Text('Error: $e')),
+                  ),
+                ),
                 loading: () =>
-                    const Center(child: CircularProgressIndicator()))),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
+                const Center(child: CircularProgressIndicator()),
+                error: (e, _) => Center(child: Text('Fav error: $e')),
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }

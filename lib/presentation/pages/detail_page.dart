@@ -3,27 +3,29 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/crypto_coin.dart';
+import '../../l10n/app_localizations.dart';
 import '../../utils/formatter.dart';
-import '../providers/riverpods/crypto_provider.dart';
+import '../providers/riverpods/coin_use_case_provider.dart';
 
 class CoinDetailPage extends ConsumerWidget {
   final CryptoCoin coin;
 
   const CoinDetailPage({super.key, required this.coin});
 
-  static const intervalData = {
-    '15M': {'label': '15 Minutes', 'value': 'm15'},
-    '1H': {'label': '1 Hour', 'value': 'h1'},
-    '1D': {'label': '1 Day', 'value': 'd1'},
+  static Map<String, String> intervalKeys = {
+    '15M': 'minutes15',
+    '1H': 'hour1',
+    '1D': 'day1',
   };
 
   Widget _buildIntervalTabs(BuildContext context, WidgetRef ref) {
+    final loc = AppLocalizations.of(context)!;
     final selectedInterval = ref.watch(selectedIntervalProvider);
 
     return Row(
-      children: intervalData.entries.map((entry) {
-        final label = entry.value['label'] as String;
-        final value = entry.value['value'] as String;
+      children: intervalKeys.entries.map((entry) {
+        final label = _getLabel(loc, entry.value);
+        final value = entry.key.toLowerCase();
 
         final isSelected = value == selectedInterval;
         final width = (MediaQuery.of(context).size.width / 4 - 16);
@@ -42,24 +44,38 @@ class CoinDetailPage extends ConsumerWidget {
                 },
               ),
             ),
-            const SizedBox(width: space), // Jarak antar chip
+            const SizedBox(width: space),
           ],
         );
       }).toList(),
     );
   }
 
-  Widget _buildInfoCard() {
+  String _getLabel(AppLocalizations loc, String key) {
+    switch (key) {
+      case 'minutes15':
+        return loc.minutes15;
+      case 'hour1':
+        return loc.hour1;
+      case 'day1':
+        return loc.day1;
+      default:
+        return key;
+    }
+  }
+
+  Widget _buildInfoCard(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Symbol: ${coin.symbol}', style: const TextStyle(fontSize: 16)),
-        Text('Rank: ${coin.rank}', style: const TextStyle(fontSize: 16)),
-        Text('Market Cap: ${formatCurrency(coin.marketCapUsd)}',
+        Text('${loc.symbol}: ${coin.symbol}', style: const TextStyle(fontSize: 16)),
+        Text('${loc.rank}: ${coin.rank}', style: const TextStyle(fontSize: 16)),
+        Text('${loc.marketCap}: ${formatCurrency(coin.marketCapUsd)}',
             style: const TextStyle(fontSize: 16)),
-        Text('Volume (24Hr): ${formatCurrency(coin.volumeUsd24Hr)}',
+        Text('${loc.volume24h}: ${formatCurrency(coin.volumeUsd24Hr)}',
             style: const TextStyle(fontSize: 16)),
-        Text('Change (24Hr): ${coin.changePercent24Hr.toStringAsFixed(2)}%',
+        Text('${loc.change24h}: ${coin.changePercent24Hr.toStringAsFixed(2)}%',
             style: const TextStyle(fontSize: 16)),
       ],
     );
@@ -67,6 +83,7 @@ class CoinDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final loc = AppLocalizations.of(context)!;
     final selectedInterval = ref.watch(selectedIntervalProvider);
     final historyAsync = ref.watch(coinDetailProvider((coin.id, selectedInterval)));
 
@@ -84,7 +101,7 @@ class CoinDetailPage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Current Price: ${formatCurrency(coin.priceUsd)}'),
+                Text('${loc.currentPrice}: ${formatCurrency(coin.priceUsd)}'),
                 const SizedBox(height: 16),
                 _buildIntervalTabs(context, ref),
                 const SizedBox(height: 16),
@@ -115,7 +132,6 @@ class CoinDetailPage extends ConsumerWidget {
                       lineTouchData: LineTouchData(
                         enabled: true,
                         touchTooltipData: LineTouchTooltipData(
-                          tooltipBgColor: Colors.black,
                           getTooltipItems: (touchedSpots) {
                             return touchedSpots.map((spot) {
                               return LineTooltipItem(
@@ -130,7 +146,7 @@ class CoinDetailPage extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                _buildInfoCard(),
+                _buildInfoCard(context),
               ],
             ),
           );

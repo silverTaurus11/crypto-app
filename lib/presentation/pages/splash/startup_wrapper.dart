@@ -1,22 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../main_page.dart';
 import 'splash_screen.dart';
-import '../../providers/riverpods/crypto_provider.dart';
 
-class StartupWrapper extends ConsumerWidget {
+class StartupWrapper extends StatefulWidget {
   const StartupWrapper({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final coinsAsync = ref.watch(cryptoAutoRefreshProvider);
+  State<StartupWrapper> createState() => _StartupWrapperState();
+}
 
-    final isCoinsReady = coinsAsync is AsyncData;
+class _StartupWrapperState extends State<StartupWrapper> {
+  bool _showSplash = true;
 
-    if (!isCoinsReady) {
-      return const SplashScreen();
-    }
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() {
+          _showSplash = false;
+        });
+      }
+    });
+  }
 
-    return const MainTabs();
+  @override
+  Widget build(BuildContext context) {
+    return _showSplash ? const SplashScreen() : const MainTabs();
   }
 }
+

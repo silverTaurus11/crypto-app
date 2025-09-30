@@ -1,0 +1,14 @@
+{
+  "@@locale": "en",
+  "home_title": "Crypto Prices",
+  "favorite_title": "Favorite Coins",
+  "currentPrice": "Current Price",
+  "symbol": "Symbol",
+  "rank": "Rank",
+  "marketCap": "Market Cap",
+  "volume24h": "Volume (24Hr)",
+  "change24h": "Change (24Hr)",
+  "minutes15": "15 Minutes",
+  "hour1": "1 Hour",
+  "day1": "1 Day"
+}
