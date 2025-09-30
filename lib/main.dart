@@ -9,10 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'l10n/app_localizations.dart';
 
-void main() {
-  runApp(const ProviderScope(child: MyApp()));
-}
-
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 

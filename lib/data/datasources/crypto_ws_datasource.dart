@@ -3,12 +3,15 @@ import 'package:crypto_app/utils/app_logger.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class CryptoWsDataSource {
+  final String baseSocketUrl;
   WebSocketChannel? _channel;
+
+  CryptoWsDataSource({required this.baseSocketUrl});
 
   Stream<Map<String, double>> connect(List<String> assets, String apiKey) {
     final symbols = assets.map((e) => e.toLowerCase()).join(',');
     final uri = Uri.parse(
-      'wss://wss.coincap.io/prices?assets=$symbols&apiKey=$apiKey',
+      '$baseSocketUrl/prices?assets=$symbols&apiKey=$apiKey',
     );
 
     AppLogger.d(">>> CONNECTING to: $uri"); // log request URL

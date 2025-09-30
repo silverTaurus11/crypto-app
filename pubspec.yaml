@@ -17,8 +17,10 @@ dependencies:
   shared_preferences: ^2.4.12
   fl_chart: ^1.1.1
   intl: ^0.20.2
+  flutter_dotenv: ^5.1.0
   flutter_localizations:
     sdk: flutter
+  web_socket_channel: ^2.4.0
 
 dev_dependencies:
   flutter_test:
@@ -29,3 +31,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    - .env.staging
+    - .env.prod
+

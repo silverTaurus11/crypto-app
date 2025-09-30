@@ -8,14 +8,16 @@ import '../models/crypto_coin_model.dart';
 
 class CryptoRestDataSource {
   final String apiKey;
+  final String baseUrl;
   final http.Client client;
 
-  CryptoRestDataSource({required this.apiKey, http.Client? client})
+  CryptoRestDataSource(
+      {required this.baseUrl, required this.apiKey, http.Client? client})
       : client = client ?? http.Client();
 
   Future<List<CryptoCoin>> fetchCoins({int limit = 100}) async {
     final url = Uri.https(
-      'rest.coincap.io',
+      baseUrl,
       '/v3/assets',
       {'limit': '$limit', 'apiKey': apiKey},
     );
@@ -33,7 +35,7 @@ class CryptoRestDataSource {
   Future<Map<String, dynamic>> fetchHistoricalDataWithTimestamps(
       String coinId, String interval) async {
     final url = Uri.https(
-      'rest.coincap.io',
+      baseUrl,
       '/v3/assets/$coinId/history',
       {'apiKey': apiKey, 'interval': interval},
     );
