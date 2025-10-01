@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1041216980445",
+    "project_id": "flutter-crypto-app-2941c",
+    "storage_bucket": "flutter-crypto-app-2941c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1041216980445:android:fedca3ed781cc6ac93e234",
+        "android_client_info": {
+          "package_name": "com.gayuh.crypto.crypto_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAE6ZYLbLqWi8Y8lgelqXYU3WPjsqOt0Yo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

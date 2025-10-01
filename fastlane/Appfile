@@ -1,0 +1,3 @@
+# Optional; isi jika ingin pakai deliver/match untuk iOS
+# app_identifier("com.example.app")          # Android: abaikan
+# apple_id("email@your-apple-id.com")       # iOS

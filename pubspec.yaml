@@ -21,6 +21,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   web_socket_channel: ^2.4.0
+  firebase_core: ^3.5.0 # versi terbaru
 
 dev_dependencies:
   flutter_test:

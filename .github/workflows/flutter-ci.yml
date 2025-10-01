@@ -1,0 +1,94 @@
+name: Flutter CI/CD Android
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    name: Build & Distribute Android (prod)
+
+    steps:
+      # Checkout code
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Setup Java (Gradle needs JDK 17)
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # Setup Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.0" # ganti sesuai projectmu
+          channel: "stable"
+
+      # Install dependencies
+      - name: Flutter pub get
+        run: flutter pub get
+
+      # Prepare Android Keystore
+      - name: Decode Android Keystore
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/upload-keystore.jks
+          cat > android/key.properties <<EOF
+          storePassword=${ANDROID_KEYSTORE_PASSWORD}
+          keyPassword=${ANDROID_KEY_ALIAS_PASSWORD}
+          keyAlias=${ANDROID_KEY_ALIAS}
+          storeFile=upload-keystore.jks
+          EOF
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_ALIAS_PASSWORD: ${{ secrets.ANDROID_KEY_ALIAS_PASSWORD }}
+
+      # Write Firebase credentials
+      - name: Write Firebase credentials
+        run: echo '${{ secrets.FIREBASE_CREDENTIALS_JSON }}' > firebase_credentials.json
+
+      # Setup Ruby & Bundler
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+
+      # Install Fastlane & Firebase plugin
+      - name: Install Fastlane
+        run: |
+          bundle install
+          bundle exec fastlane add_plugin firebase_app_distribution
+
+      # Build & upload APK prod
+      - name: Fastlane android beta (APK)
+        env:
+          FIREBASE_APP_ID_ANDROID: ${{ secrets.FIREBASE_APP_ID_ANDROID }}
+          FIREBASE_GROUPS: ${{ secrets.FIREBASE_GROUPS }}
+          FIREBASE_CREDENTIALS_JSON_PATH: firebase_credentials.json
+          RELEASE_NOTES: "GitHub CI APK build ${{ github.ref_name }} by ${{ github.actor }}"
+        run: bundle exec fastlane android beta
+
+      # Build & upload AAB prod
+      - name: Fastlane android release (AAB)
+        env:
+          FIREBASE_APP_ID_ANDROID: ${{ secrets.FIREBASE_APP_ID_ANDROID }}
+          FIREBASE_GROUPS: ${{ secrets.FIREBASE_GROUPS }}
+          FIREBASE_CREDENTIALS_JSON_PATH: firebase_credentials.json
+          RELEASE_NOTES: "GitHub CI AAB build ${{ github.ref_name }} by ${{ github.actor }}"
+        run: bundle exec fastlane android release
+
+      # Upload artifacts (opsional)
+      - name: Upload build outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-builds
+          path: |
+            build/app/outputs/flutter-apk/*.apk
+            build/app/outputs/bundle/prodRelease/*.aab

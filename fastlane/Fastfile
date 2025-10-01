@@ -1,0 +1,43 @@
+default_platform(:android)
+
+platform :android do
+  desc "Build & distribute AAB (prod release) with keystore signing"
+  lane :release do
+    # ====== Recreate keystore & key.properties ======
+    UI.message "🔑 Preparing keystore and key.properties..."
+    keystore_dir = "android/app"
+    keystore_file = File.join(keystore_dir, "upload-keystore.jks")
+    FileUtils.mkdir_p(keystore_dir)
+
+    # Decode keystore dari ENV base64
+    File.open(keystore_file, "wb") do |f|
+      f.write(Base64.decode64(ENV["ANDROID_KEYSTORE_BASE64"]))
+    end
+
+    # Generate key.properties
+    key_props = <<~EOF
+      storePassword=#{ENV["ANDROID_KEYSTORE_PASSWORD"]}
+      keyPassword=#{ENV["ANDROID_KEY_ALIAS_PASSWORD"]}
+      keyAlias=#{ENV["ANDROID_KEY_ALIAS"]}
+      storeFile=upload-keystore.jks
+    EOF
+    File.write("android/key.properties", key_props)
+
+    # ====== Flutter build AAB ======
+    sh("flutter build appbundle --flavor prod -t lib/main_prod.dart --release")
+
+    aab_path = Dir["build/app/outputs/bundle/prodRelease/app-prod-release.aab"].first
+    UI.user_error!("AAB not found") unless aab_path && File.exist?(aab_path)
+
+    # ====== Upload ke Firebase App Distribution ======
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID_ANDROID"],
+      release_notes: ENV["RELEASE_NOTES"] || "CI build",
+      service_credentials_file: ENV["FIREBASE_CREDENTIALS_JSON_PATH"] || "firebase_credentials.json",
+      testers: ENV["FIREBASE_TESTERS"],
+      groups: ENV["FIREBASE_GROUPS"],
+      android_artifact_type: "AAB",
+      android_artifact_path: aab_path
+    )
+  end
+end
