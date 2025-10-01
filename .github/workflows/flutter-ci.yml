@@ -26,7 +26,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.0" # ganti sesuai projectmu
+          flutter-version: "3.6.1" # ganti sesuai projectmu
           channel: "stable"
 
       # Install dependencies
