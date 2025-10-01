@@ -44,5 +44,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-.env.staging
-.env.prod
+*.env.staging
+*.env.prod
+
+/build_script/android/build
+/build_script/ios/build
+

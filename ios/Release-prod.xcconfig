@@ -1,5 +1,5 @@
-#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-prod.xcconfig"
+#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-runner-prod.xcconfig"
 #include "Flutter/Generated.xcconfig"
-#include "Flutter/Debug.xcconfig"
 
 FLUTTER_BUILD_MODE=release
+FLUTTER_TARGET=lib/main_prod.dart
