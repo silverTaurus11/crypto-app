@@ -41,6 +41,7 @@ platform :android do
 
     # ====== Flutter build AAB ======
     sh("flutter clean")
+    sh("flutter pub get")
     sh("flutter build appbundle --flavor prod -t lib/main_prod.dart --release")
 
     aab_path = Dir["build/app/outputs/bundle/prodRelease/app-prod-release.aab"].first
