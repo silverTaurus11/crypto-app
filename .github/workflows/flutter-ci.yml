@@ -22,8 +22,8 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      # Setup Flutter (pakai channel beta supaya dapat Dart >= 3.6.1)
-      - name: Setup Flutter (beta with Dart 3.6.1)
+      # Setup Flutter (pakai channel beta untuk Dart >= 3.6.1)
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: "beta"
@@ -32,31 +32,7 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
-      - name: Debug check ANDROID_KEYSTORE_BASE64 length
-        run: |
-          echo "$ANDROID_KEYSTORE_BASE64" | wc -c
-        env:
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-
-      # Decode Android Keystore dari secret base64
-      - name: Decode Android Keystore
-        run: |
-          mkdir -p android/keystore
-          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/keystore/upload-keystore.jks
-          cat > android/key.properties <<EOF
-          storePassword=${ANDROID_KEYSTORE_PASSWORD}
-          keyPassword=${ANDROID_KEY_ALIAS_PASSWORD}
-          keyAlias=${ANDROID_KEY_ALIAS}
-          storeFile=keystore/upload-keystore.jks
-          EOF
-        env:
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_ALIAS_PASSWORD: ${{ secrets.ANDROID_KEY_ALIAS_PASSWORD }}
-
-
-        # Tulis Firebase credentials JSON
+      # Tulis Firebase credentials (service account JSON)
       - name: Write Firebase credentials
         run: echo '${{ secrets.FIREBASE_CREDENTIALS_JSON }}' > firebase_credentials.json
 
@@ -67,20 +43,24 @@ jobs:
           ruby-version: "3.2"
           bundler-cache: true
 
-      # Install Fastlane & plugin dari Gemfile/Pluginfile
-      - name: Install Fastlane & Firebase plugin
+      # Install Fastlane & plugins
+      - name: Install Fastlane & plugins
         run: bundle install
 
-      # Build & upload AAB prod flavor ke Firebase App Distribution
+      # Build & upload AAB prod via Fastlane (decode keystore ada di Fastfile)
       - name: Fastlane android release (AAB)
         env:
           FIREBASE_APP_ID_ANDROID: ${{ secrets.FIREBASE_APP_ID_ANDROID }}
           FIREBASE_GROUPS: ${{ secrets.FIREBASE_GROUPS }}
           FIREBASE_CREDENTIALS_JSON_PATH: firebase_credentials.json
           RELEASE_NOTES: "GitHub CI AAB build ${{ github.ref_name }} by ${{ github.actor }}"
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_ALIAS_PASSWORD: ${{ secrets.ANDROID_KEY_ALIAS_PASSWORD }}
         run: bundle exec fastlane android release
 
-      # Upload artifacts (opsional)
+      # Upload artifacts (opsional, simpan hasil build di GitHub)
       - name: Upload build outputs
         uses: actions/upload-artifact@v4
         with:
