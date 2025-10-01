@@ -59,6 +59,14 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_ALIAS_PASSWORD: ${{ secrets.ANDROID_KEY_ALIAS_PASSWORD }}
         run: bundle exec fastlane android release
+        
+      # Upload keystore artifact for debugging (even if build fails)
+      - name: Upload keystore artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: upload-keystore
+          path: android/app/upload-keystore.jks
 
       # Upload artifacts (opsional, simpan hasil build di GitHub)
       - name: Upload build outputs
