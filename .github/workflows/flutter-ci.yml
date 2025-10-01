@@ -59,7 +59,7 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_ALIAS_PASSWORD: ${{ secrets.ANDROID_KEY_ALIAS_PASSWORD }}
         run: bundle exec fastlane android release
-        
+
       # Upload keystore artifact for debugging (even if build fails)
       - name: Upload keystore artifact
         if: always()
@@ -74,5 +74,5 @@ jobs:
         with:
           name: android-builds
           path: |
-            build/app/outputs/bundle/prodRelease/*.aab
+            build/app/outputs/bundle/prodRelease/app-prod-release.aab
             build/app/outputs/flutter-apk/*.apk
