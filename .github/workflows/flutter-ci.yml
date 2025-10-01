@@ -32,6 +32,12 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
+      - name: Debug check ANDROID_KEYSTORE_BASE64 length
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | wc -c
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+
       # Decode Android Keystore dari secret base64
       - name: Decode Android Keystore
         run: |
@@ -62,12 +68,6 @@ jobs:
       # Install Fastlane & plugin dari Gemfile/Pluginfile
       - name: Install Fastlane & Firebase plugin
         run: bundle install
-
-      - name: Debug check ANDROID_KEYSTORE_BASE64 length
-        run: |
-          echo "$ANDROID_KEYSTORE_BASE64" | wc -c
-        env:
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
 
       # Build & upload AAB prod flavor ke Firebase App Distribution
       - name: Fastlane android release (AAB)
