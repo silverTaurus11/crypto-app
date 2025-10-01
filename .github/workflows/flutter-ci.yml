@@ -22,7 +22,7 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      # Setup Flutter (fix: pakai Flutter 3.27.0 yang bundling Dart >=3.6.1)
+      # Setup Flutter (pakai channel beta supaya dapat Dart >= 3.6.1)
       - name: Setup Flutter (beta with Dart 3.6.1)
         uses: subosito/flutter-action@v2
         with:
@@ -32,7 +32,7 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
-      # Prepare Android Keystore
+      # Decode Android Keystore dari secret base64
       - name: Decode Android Keystore
         run: |
           echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/upload-keystore.jks
@@ -48,7 +48,7 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_ALIAS_PASSWORD: ${{ secrets.ANDROID_KEY_ALIAS_PASSWORD }}
 
-      # Write Firebase credentials
+      # Tulis Firebase credentials JSON
       - name: Write Firebase credentials
         run: echo '${{ secrets.FIREBASE_CREDENTIALS_JSON }}' > firebase_credentials.json
 
@@ -59,11 +59,11 @@ jobs:
           ruby-version: "3.2"
           bundler-cache: true
 
-      # Install Fastlane & Firebase plugin
+      # Install Fastlane & plugin dari Gemfile/Pluginfile
       - name: Install Fastlane & Firebase plugin
         run: bundle install
 
-      # Build & upload AAB prod
+      # Build & upload AAB prod flavor ke Firebase App Distribution
       - name: Fastlane android release (AAB)
         env:
           FIREBASE_APP_ID_ANDROID: ${{ secrets.FIREBASE_APP_ID_ANDROID }}
@@ -78,5 +78,5 @@ jobs:
         with:
           name: android-builds
           path: |
-            build/app/outputs/flutter-apk/*.apk
             build/app/outputs/bundle/prodRelease/*.aab
+            build/app/outputs/flutter-apk/*.apk
