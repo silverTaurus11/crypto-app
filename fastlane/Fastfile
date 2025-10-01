@@ -4,7 +4,6 @@ default_platform(:android)
 platform :android do
   desc "Build & distribute AAB (prod release) with keystore signing"
   lane :release do
-    # ====== Recreate keystore & key.properties ======
     UI.message "🔑 Preparing keystore and key.properties..."
     keystore_dir = "android/app"
     keystore_file = File.join(keystore_dir, "upload-keystore.jks")
@@ -28,6 +27,12 @@ platform :android do
     EOF
     File.write("android/key.properties", key_props)
 
+    # ====== Debug log ======
+    UI.message "==== CHECKING FILES ===="
+    sh("ls -lh android/app/")
+    UI.message "==== CONTENT OF key.properties ===="
+    sh("cat android/key.properties")
+
     # ====== Flutter build AAB ======
     sh("flutter build appbundle --flavor prod -t lib/main_prod.dart --release")
 
@@ -46,3 +51,4 @@ platform :android do
     )
   end
 end
+
