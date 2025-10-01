@@ -22,11 +22,11 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      # Setup Flutter
+      # Setup Flutter (fix: pakai Flutter 3.27.0 yang bundling Dart >=3.6.1)
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "^3.6.1" # ganti sesuai projectmu
+          flutter-version: "3.27.0"
           channel: "stable"
 
       # Install dependencies
