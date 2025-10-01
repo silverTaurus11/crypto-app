@@ -41,6 +41,7 @@ jobs:
       # Decode Android Keystore dari secret base64
       - name: Decode Android Keystore
         run: |
+          mkdir -p android/keystore
           echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/keystore/upload-keystore.jks
           cat > android/key.properties <<EOF
           storePassword=${ANDROID_KEYSTORE_PASSWORD}
@@ -54,7 +55,8 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_ALIAS_PASSWORD: ${{ secrets.ANDROID_KEY_ALIAS_PASSWORD }}
 
-      # Tulis Firebase credentials JSON
+
+        # Tulis Firebase credentials JSON
       - name: Write Firebase credentials
         run: echo '${{ secrets.FIREBASE_CREDENTIALS_JSON }}' > firebase_credentials.json
 
