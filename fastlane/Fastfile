@@ -33,8 +33,11 @@ platform :android do
     UI.message "==== key.properties ===="
     sh("cat android/key.properties")
 
-    UI.message "==== keytool verify keystore ===="
+    UI.message "==== keytool verify keystore (storePassword) ===="
     sh("keytool -list -v -keystore android/app/upload-keystore.jks -storepass #{ENV['ANDROID_KEYSTORE_PASSWORD']} || true")
+
+    UI.message "==== keytool verify alias (aliasPassword) ===="
+    sh("keytool -v -keystore android/app/upload-keystore.jks -storepass #{ENV['ANDROID_KEYSTORE_PASSWORD']} -keypass #{ENV['ANDROID_KEY_ALIAS_PASSWORD']} -alias #{ENV['ANDROID_KEY_ALIAS']} || true")
 
     # ====== Flutter build AAB ======
     sh("flutter clean")
