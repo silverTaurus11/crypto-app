@@ -63,6 +63,12 @@ jobs:
       - name: Install Fastlane & Firebase plugin
         run: bundle install
 
+      - name: Debug secret length
+        run:
+          echo "Keystore length: ${#ANDROID_KEYSTORE_BASE64}"
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+
       # Build & upload AAB prod flavor ke Firebase App Distribution
       - name: Fastlane android release (AAB)
         env:

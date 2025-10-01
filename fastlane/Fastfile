@@ -10,6 +10,10 @@ platform :android do
     FileUtils.mkdir_p(keystore_dir)
 
     # Decode keystore dari ENV base64
+    if ENV["ANDROID_KEYSTORE_BASE64"].to_s.strip.empty?
+      UI.user_error!("ANDROID_KEYSTORE_BASE64 is missing or empty")
+    end
+
     File.open(keystore_file, "wb") do |f|
       f.write(Base64.decode64(ENV["ANDROID_KEYSTORE_BASE64"]))
     end
