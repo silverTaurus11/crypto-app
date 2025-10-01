@@ -60,10 +60,8 @@ jobs:
           bundler-cache: true
 
       # Install Fastlane & Firebase plugin
-      - name: Install Fastlane
-        run: |
-          bundle install
-          bundle exec fastlane add_plugin firebase_app_distribution
+      - name: Install Fastlane & Firebase plugin
+        run: bundle install
 
       # Build & upload APK prod
       - name: Fastlane android beta (APK)
