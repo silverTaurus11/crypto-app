@@ -63,15 +63,6 @@ jobs:
       - name: Install Fastlane & Firebase plugin
         run: bundle install
 
-      # Build & upload APK prod
-      - name: Fastlane android beta (APK)
-        env:
-          FIREBASE_APP_ID_ANDROID: ${{ secrets.FIREBASE_APP_ID_ANDROID }}
-          FIREBASE_GROUPS: ${{ secrets.FIREBASE_GROUPS }}
-          FIREBASE_CREDENTIALS_JSON_PATH: firebase_credentials.json
-          RELEASE_NOTES: "GitHub CI APK build ${{ github.ref_name }} by ${{ github.actor }}"
-        run: bundle exec fastlane android beta
-
       # Build & upload AAB prod
       - name: Fastlane android release (AAB)
         env:
