@@ -26,19 +26,24 @@ platform :android do
     EOF
     File.write("android/key.properties", key_props)
 
-    # Debug log
+    # ====== Debug log ======
     UI.message "==== CHECK FILES ===="
     sh("ls -lh android/app/")
+
     UI.message "==== key.properties ===="
     sh("cat android/key.properties")
 
-    # Build AAB
+    UI.message "==== keytool verify keystore ===="
+    sh("keytool -list -v -keystore android/app/upload-keystore.jks -storepass #{ENV['ANDROID_KEYSTORE_PASSWORD']} || true")
+
+    # ====== Flutter build AAB ======
+    sh("flutter clean")
     sh("flutter build appbundle --flavor prod -t lib/main_prod.dart --release")
 
     aab_path = Dir["build/app/outputs/bundle/prodRelease/app-prod-release.aab"].first
     UI.user_error!("AAB not found") unless aab_path && File.exist?(aab_path)
 
-    # Upload ke Firebase App Distribution
+    # ====== Upload ke Firebase App Distribution ======
     firebase_app_distribution(
       app: ENV["FIREBASE_APP_ID_ANDROID"],
       release_notes: ENV["RELEASE_NOTES"] || "CI build",
