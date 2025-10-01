@@ -35,12 +35,12 @@ jobs:
       # Decode Android Keystore dari secret base64
       - name: Decode Android Keystore
         run: |
-          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/upload-keystore.jks
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/keystore/upload-keystore.jks
           cat > android/key.properties <<EOF
           storePassword=${ANDROID_KEYSTORE_PASSWORD}
           keyPassword=${ANDROID_KEY_ALIAS_PASSWORD}
           keyAlias=${ANDROID_KEY_ALIAS}
-          storeFile=upload-keystore.jks
+          storeFile=keystore/upload-keystore.jks
           EOF
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -68,7 +68,7 @@ jobs:
           echo "$ANDROID_KEYSTORE_BASE64" | wc -c
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-      
+
       # Build & upload AAB prod flavor ke Firebase App Distribution
       - name: Fastlane android release (AAB)
         env:
