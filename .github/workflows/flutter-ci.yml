@@ -23,11 +23,10 @@ jobs:
           java-version: "17"
 
       # Setup Flutter (fix: pakai Flutter 3.27.0 yang bundling Dart >=3.6.1)
-      - name: Setup Flutter
+      - name: Setup Flutter (beta with Dart 3.6.1)
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.27.0"
-          channel: "stable"
+          channel: "beta"
 
       # Install dependencies
       - name: Flutter pub get
